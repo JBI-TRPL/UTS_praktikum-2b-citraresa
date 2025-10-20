@@ -5,6 +5,7 @@ import 'package:pos_app/screens/pos/pos_screen.dart';
 import 'package:pos_app/screens/product/product_management_screen.dart';
 import 'package:pos_app/screens/transaction/transaction_history_screen.dart';
 import 'package:pos_app/screens/profile/profile_screen.dart';
+import 'package:pos_app/screens/laporan/produk_terlaris.dart';
 
 class HomeScreen extends StatefulWidget {
   final User user;
@@ -82,44 +83,62 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: GridView.count(
-        crossAxisCount: 2,
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        crossAxisSpacing: 16.0,
-        mainAxisSpacing: 16.0,
-        children: [
-            _buildDashboardCard(
-            context,
-            icon: Icons.point_of_sale,
-            label: 'Transaksi Baru',
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const PosScreen()));
-            },
-          ),
-          _buildDashboardCard(
-            context,
-            icon: Icons.inventory,
-            label: 'Manajemen Produk',
-            onTap: () {
-              Navigator.push(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 🔹 Tambahan Widget: Top 5 Produk Terlaris
+            TopFiveProducts(topProducts: dataAsliTopProducts),
+
+            const SizedBox(height: 20),
+
+            // 🔹 Grid Menu (seperti sebelumnya)
+            GridView.count(
+              crossAxisCount: 2,
+              crossAxisSpacing: 16.0,
+              mainAxisSpacing: 16.0,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              children: [
+                _buildDashboardCard(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => const ProductManagementScreen()));
-            },
-          ),
-          _buildDashboardCard(
-            context,
-            icon: Icons.history,
-            label: 'Riwayat Transaksi',
-            onTap: () {
-              setState(() => _selectedIndex = 1);
-            },
-          ),
-        ],
+                  icon: Icons.point_of_sale,
+                  label: 'Transaksi Baru',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const PosScreen()),
+                    );
+                  },
+                ),
+                _buildDashboardCard(
+                  context,
+                  icon: Icons.inventory,
+                  label: 'Manajemen Produk',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const ProductManagementScreen()),
+                    );
+                  },
+                ),
+                _buildDashboardCard(
+                  context,
+                  icon: Icons.history,
+                  label: 'Riwayat Transaksi',
+                  onTap: () {
+                    setState(() => _selectedIndex = 1);
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
+
 
   Future<void> _openProfile() async {
     final updated = await Navigator.push<User?>(
